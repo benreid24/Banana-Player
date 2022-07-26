@@ -15,7 +15,6 @@ export type PlayerContextValue = {
 export const PlayerContext = React.createContext<PlayerContextValue | null>(null);
 
 export const PlayerContextProvider: React.FC<PlayerContextProviderProps> = ({children}) => {
-  console.log('rendering player context');
   const [playerState, setPlayerState] = React.useState<PlayerState | null>(null);
 
   const handleRefresh = React.useCallback((refresh: PlayerState) => {

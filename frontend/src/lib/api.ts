@@ -82,6 +82,7 @@ export const getPlayerConfig = async (): Promise<PlayerConfig> => {
 
 export const getPlayerState = async(): Promise<PlayerState> => {
   if (dummy) {
+    await new Promise(resolve => setTimeout(resolve, 500));
     return {
       initialPlaylistChosen: false,
       playingPath: [],
@@ -124,6 +125,7 @@ export const getPlayerState = async(): Promise<PlayerState> => {
 
 export const listFolder = async (path: string[]): Promise<FolderListing> => {
   if (dummy) {
+    await new Promise(resolve => setTimeout(resolve, 1500));
     return {
       path: path.slice(0, path.length - 1),
       name: path[path.length - 1],

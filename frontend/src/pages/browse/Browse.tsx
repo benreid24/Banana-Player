@@ -5,10 +5,23 @@ import {useConfigContext} from 'lib/contexts/ConfigContext';
 import {usePlayerContext} from 'lib/contexts/PlayerContext';
 import {TitleBar} from 'components/TitleBar';
 import {LoadingState} from 'components/LoadingState';
+import {Page} from 'components/Page';
+import {FolderListing} from 'lib/types';
+import {listFolder} from 'lib/api';
 
 export const Browse: React.FC = () => {
   const {playerState} = usePlayerContext();
   const {username, playerConfig} = useConfigContext();
+
+  const [folderListing, setFolderListing] = React.useState<FolderListing | null>(null);
+  const [initialListing, setInitialListing] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    if (playerState && !folderListing && !initialListing) {
+      setInitialListing(true);
+      listFolder(playerState.playingPath).then(listing => setFolderListing(listing));
+    }
+  }, [setFolderListing, playerState]);
 
   if (!playerConfig) {
     return (
@@ -23,9 +36,18 @@ export const Browse: React.FC = () => {
     return <Navigate to='/setup' replace />
   }
 
+  if (!folderListing) {
+    return (
+      <>
+        <TitleBar/>
+        <LoadingState/>
+      </>
+    );
+  }
+
   return (
-    <>
-      Browse Page Here
-    </>
+    <Page>
+      <TitleBar/>
+    </Page>
   );
 };

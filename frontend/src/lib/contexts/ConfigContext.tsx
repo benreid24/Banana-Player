@@ -3,8 +3,6 @@ import React from 'react';
 import {PlayerConfig} from 'lib/types';
 import {getPlayerConfig, setPlayerConfig as setRemotePlayerConfig} from 'lib/api';
 
-const forceNameEntry = true;
-
 type ConfigContextProviderProps = {
   children: any[];
 }
@@ -19,7 +17,7 @@ export type ConfigContextValue = {
 export const ConfigContext = React.createContext<ConfigContextValue | null>(null);
 
 export const ConfigContextProvider: React.FC<ConfigContextProviderProps> = ({children}) => {
-  const [username, setMemoryUsername] = React.useState<string | null>(!forceNameEntry ? localStorage.getItem('username') : null);
+  const [username, setMemoryUsername] = React.useState<string | null>(localStorage.getItem('username'));
   const [playerConfig, setLocalPlayerConfig] = React.useState<PlayerConfig | null>(null);
 
   React.useEffect(() => {
