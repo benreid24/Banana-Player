@@ -59,4 +59,4 @@ export const useConfigContext = (): ConfigContextValue => {
     throw new Error('useConfigContext() may only be called from within a ConfigContextProvider');
   }
   return ctx;
-}
+};

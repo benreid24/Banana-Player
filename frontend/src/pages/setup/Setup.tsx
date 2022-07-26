@@ -9,6 +9,7 @@ import {useConfigContext} from 'lib/contexts/ConfigContext';
 import {OutputOptions, OutputOption} from 'lib/types';
 import {listOutputOptions} from 'lib/api';
 import {ErrorText} from 'components/ErrorText';
+import {usePlayerContext} from 'lib/contexts/PlayerContext';
 
 enum SetupStage {
   NameEntry,
@@ -191,25 +192,29 @@ const OutputSelector: React.FC<OutputSelectorProps> = ({outputs, onOutputChosen}
 };
 
 export const Setup: React.FC = () => {
+  const {playerState} = usePlayerContext();
   const {username, setUsername, playerConfig, setPlayerConfig} = useConfigContext();
   const [stage, setStage] = React.useState<SetupStage>(!username ? SetupStage.NameEntry : SetupStage.OutputSelection);
   const [nameText, setNameText] = React.useState<string>('');
   const [outputOptions, setOutputOptions] = React.useState<OutputOptions | null>(null);
   const navigate = useNavigate();
 
-  const finished = React.useCallback(
-    () => navigate('/player', {replace: true}),
-     [navigate]);
-
   React.useEffect(() => {
     listOutputOptions().then(options => setOutputOptions(options));
   }, []);
 
   React.useEffect(() => {
-    if (stage === SetupStage.Applying && playerConfig && playerConfig.output) {
-      finished();
+    if (stage === SetupStage.Applying && playerConfig && playerConfig.output && playerState) {
+      if (playerState) {
+        if (playerState.initialPlaylistChosen) {
+          navigate('/player', {replace: true});
+        }
+        else {
+          navigate('/browse', {replace: true});
+        }
+      }
     }
-  }, [playerConfig, stage, finished]);
+  }, [playerConfig, stage, navigate, playerState]);
 
   const nameEntered = () => {
     if (nameText.length > 1) {
@@ -218,7 +223,7 @@ export const Setup: React.FC = () => {
         setStage(SetupStage.OutputSelection);
       }
       else {
-        finished();
+        setStage(SetupStage.Applying);
       }
     }
   };

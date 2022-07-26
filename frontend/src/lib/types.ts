@@ -23,29 +23,41 @@ export type TrackInfo = {
   duration: number;
 };
 
-export type PlayingTrackInfo = TrackInfo & {
+export type PlayingTrackInfo = {
+  playingUserPlaylist: boolean;
+  index: number;
   playHead: number;
-  thumbnail: Blob;
+  thumbnail?: Blob;
 };
 
 export type Playlist = {
   name: string;
   tracks: TrackInfo[];
   index: number;
-  nowPlaying: PlayingTrackInfo;
 };
 
-export type PlayInfo = {
+export type PlayerState = {
+  initialPlaylistChosen: boolean;
+  playingPath: string[];
   mainPlaylist: Playlist;
   userQueue: Playlist;
-  playingUserList: boolean;
+  playingNow: PlayingTrackInfo;
   volume: number;
+  paused: boolean;
 };
 
-export type PlayInfoUpdate = {
+export type PlayerStateUpdate = {
   userQueue: Playlist;
-  playingUserList: boolean;
-  playIndex: number;
-  playHead: number;
+  nowPlaying: PlayingTrackInfo;
   volume: number;
-}
+  paused: boolean;
+};
+
+////////////////// Browse Types  //////////////////
+
+export type FolderListing = {
+  path: string[];
+  name: string;
+  childFolders: string[];
+  tracks: TrackInfo[];
+};
