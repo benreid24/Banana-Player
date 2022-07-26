@@ -1,14 +1,18 @@
 //////////////////  Config Types   //////////////////
 
-export enum OutputType {
-  AudioDevice = 0,
-  MediaRenderer = 1
+export type OutputOption = {
+  name: string;
+  identifier: string;
 };
 
-export type OutputOption = {
-  outputType: OutputType;
-  name: string;
-}
+export type OutputOptions = {
+  localDevices: OutputOption[];
+  renderers: OutputOption[];
+};
+
+export type PlayerConfig = {
+  output?: OutputOption;
+};
 
 ////////////////// Playback Types  //////////////////
 
