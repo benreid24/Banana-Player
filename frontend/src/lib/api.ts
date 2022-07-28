@@ -5,6 +5,7 @@ let connection: LiveConnection | null = null;
 
 const dummy = true;
 let dummyConfig: PlayerConfig | null = null;
+let dummyPlayerReady = false;
 const dummyTracks: TrackInfo[] = [
   {
     title: 'Local song 1',
@@ -84,7 +85,7 @@ export const getPlayerState = async(): Promise<PlayerState> => {
   if (dummy) {
     await new Promise(resolve => setTimeout(resolve, 500));
     return {
-      initialPlaylistChosen: false,
+      initialPlaylistChosen: dummyPlayerReady,
       playingPath: [],
       mainPlaylist: {
         name: 'Ultimate Peoplemon 3 Playlist',
@@ -149,7 +150,7 @@ export const listFolder = async (path: string[]): Promise<FolderListing> => {
 export const playFolder = async (path: string[]): Promise<void> => {
   if (dummy) {
     await new Promise(resolve => setTimeout(resolve, 1500));
-    // TODO - set dummy player state to playing
+    dummyPlayerReady = true;
     return;
   }
 

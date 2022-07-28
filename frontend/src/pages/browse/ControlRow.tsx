@@ -134,11 +134,28 @@ const BackToPlayerButton = styled.div`
 
   &:hover {
     background-color: #ffc5f7;
+    animation-name: none;
   }
 
   &:active {
     background-color: #d285c7;
+    animation-name: none;
   }
+
+  @keyframes colors {
+    from {
+      background-color: #f2a5e7;
+    }
+
+    to {
+      background-color: #fdc8fa;
+    }
+  }
+
+  animation-name: colors;
+  animation-duration: 0.7s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
 `;
 
 type FolderPathProps = {
@@ -147,8 +164,6 @@ type FolderPathProps = {
 }
 
 const FolderPath: React.FC<FolderPathProps> = ({path, onFolderClicked}) => {
-  console.log(path);
-
   if (path.length === 0) {
     return <FolderPathArea/>
   }

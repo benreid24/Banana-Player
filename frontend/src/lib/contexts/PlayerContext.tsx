@@ -10,12 +10,20 @@ type PlayerContextProviderProps = {
 
 export type PlayerContextValue = {
   playerState: PlayerState | null;
+  refreshState: () => Promise<PlayerState>;
 };
 
 export const PlayerContext = React.createContext<PlayerContextValue | null>(null);
 
 export const PlayerContextProvider: React.FC<PlayerContextProviderProps> = ({children}) => {
   const [playerState, setPlayerState] = React.useState<PlayerState | null>(null);
+
+  const refreshState = React.useCallback(async () => {
+    setPlayerState(null);
+    const ns = await getPlayerState();
+    setPlayerState(ns);
+    return ns;
+  }, [setPlayerState]);
 
   const handleRefresh = React.useCallback((refresh: PlayerState) => {
     setPlayerState(refresh);
@@ -49,7 +57,13 @@ export const PlayerContextProvider: React.FC<PlayerContextProviderProps> = ({chi
     getPlayerState().then(state => setPlayerState(state));
   }, []);
 
-  const contextValue = React.useMemo<PlayerContextValue>(() => ({playerState}),[playerState]);
+  const contextValue = React.useMemo<PlayerContextValue>(() => ({
+    playerState,
+    refreshState
+  }),[
+    playerState,
+    refreshState
+  ]);
 
   return <PlayerContext.Provider value={contextValue}>{children}</PlayerContext.Provider>
 };

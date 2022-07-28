@@ -23,7 +23,7 @@ const TracksLabel = styled.h2`
 
 export const Browse: React.FC = () => {
   const navigate = useNavigate();
-  const {playerState} = usePlayerContext();
+  const {playerState, refreshState} = usePlayerContext();
   const {username, playerConfig} = useConfigContext();
 
   const [folderListing, setFolderListing] = React.useState<FolderListing | null>(null);
@@ -59,7 +59,6 @@ export const Browse: React.FC = () => {
   }
 
   const startListFolder = (newPath: string[]) => {
-    console.log(`listing folder: ${newPath}`)
     setFolderListing(null);
     listFolder(newPath).then(listing => setFolderListing(listing));
   };
@@ -72,9 +71,18 @@ export const Browse: React.FC = () => {
     startListFolder(index >= 0 ? folderListing.path.slice(0, index + 1) : []);
   };
 
-  const onPlayClicked = () => {
+  const onPlayClicked = async () => {
+    const path = folderListing.path.slice();
     setFolderListing(null);
-    playFolder(folderListing.path).then(() => navigate('/player'));
+    await playFolder(folderListing.path);
+    refreshState().then(newState => {
+      if (newState.initialPlaylistChosen) {
+        navigate('/player');
+      }
+      else {
+        startListFolder(path);
+      }
+    });
   };
 
   const track: TrackInfo = {
