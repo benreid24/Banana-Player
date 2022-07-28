@@ -39,6 +39,7 @@ const FolderRow = styled.div`
   display: flex;
   flex-direction: row;
   width: 95%;
+  margin-top: 3px;
   margin-bottom: 30px;
   height: 14vh;
   margin-right: auto;
