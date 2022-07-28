@@ -1,115 +1,28 @@
 import React from 'react';
-import {Navigate} from 'react-router-dom';
+import {Navigate, useNavigate} from 'react-router-dom';
+import styled from 'styled-components';
 
 import {useConfigContext} from 'lib/contexts/ConfigContext';
 import {usePlayerContext} from 'lib/contexts/PlayerContext';
 import {TitleBar} from 'components/TitleBar';
 import {LoadingState} from 'components/LoadingState';
 import {Page} from 'components/Page';
-import {FolderListing} from 'lib/types';
-import {listFolder} from 'lib/api';
-import styled from 'styled-components';
+import {FolderListing, TrackInfo} from 'lib/types';
+import {listFolder, playFolder} from 'lib/api';
+import {FolderSelector} from './FolderSelector';
+import {TrackListing} from './TrackListing';
+import {ControlRow} from './ControlRow';
+import path from 'path';
 
-const ControlRow = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  margin-left: auto;
-  margin-right: auto;
-  max-width: 75%;
-`;
-
-const FolderTileBackground = styled.div`
-  border-radius: 8px;
-  background-color: #eff28f;
-  border: 2px solid black;
-  margin-left: 30px;
-  margin-right: 30px;
-`;
-
-const FolderTitle = styled.h2`
-  font-size: 32pt;
-  text-align: left;
-  color: #333333;
-  margin-left: 12px;
-  margin-top: 8px;
-`;
-
-const FolderRow = styled.div`
-  display: flex;
-  flex-direction: row;
-  max-width: 75%;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 30px;
-`;
-
-const FolderRowArea = styled.div`
-  display: flex;
-  flex-direction: column;
-  max-height: 75%;
-  width: 100%;
-  overflow-y: auto;
-`;
-
-const FolderPathArea = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  flex-grow: 1;
-`;
-
-const FolderPathButton = styled.div`
-  background: #f28f94;
-  border: 1px solid red;
-  border-radius: 4px;
-`;
-
-const FolderPathText = styled.p`
-  font-size: 16pt;
+const TracksLabel = styled.h2`
+  font-size: 28pt;
   text-align: center;
-  color: black;
-  margin-left: 8px;
-  margin-right: 8px;
+  padding-bottom: 0;
+  margin-bottom: 0;
 `;
-
-const FolderTile: React.FC<{title: string}> = ({title}) => {
-  return (
-    <FolderTileBackground>
-      <FolderTitle>{title}</FolderTitle>
-    </FolderTileBackground>
-  );
-};
-
-const FolderPath: React.FC<{path: string[]}> = ({path}) => {
-  if (path.length === 0) {
-    return <FolderPathArea/>
-  }
-
-  const renderPathButton = (folder: string) => {
-    return (
-      <FolderPathButton key={folder}>
-        <FolderPathText>{folder}</FolderPathText>
-      </FolderPathButton>
-    );
-  };
-
-  const segments = path.slice(1).map(folder => (
-    <>
-      <FolderPathText>/</FolderPathText>
-      {renderPathButton(folder)}
-    </>
-  ));
-
-  return (
-    <FolderPathArea>
-      {renderPathButton(path[0])}
-      {segments}
-    </FolderPathArea>
-  )
-};
 
 export const Browse: React.FC = () => {
+  const navigate = useNavigate();
   const {playerState} = usePlayerContext();
   const {username, playerConfig} = useConfigContext();
 
@@ -145,26 +58,45 @@ export const Browse: React.FC = () => {
     );
   }
 
-  const renderRow = (folders: string[]) => {
-    const tiles = folders.map(folder => <FolderTile key={folder} title={folder}/>);
-    return (
-      <FolderRow key={folders[0]}>
-        {tiles}
-      </FolderRow>
-    );
+  const startListFolder = (newPath: string[]) => {
+    console.log(`listing folder: ${newPath}`)
+    setFolderListing(null);
+    listFolder(newPath).then(listing => setFolderListing(listing));
   };
 
-  let folders: React.ReactElement[] = [];
-  for (let i = 0; i < folderListing.childFolders.length; i += 3) {
-    folders.push(renderRow(folderListing.childFolders.slice(i, i+3)));
-  }
+  const onFolderClicked = (folder: string) => {
+    startListFolder([...folderListing.path, folder]);
+  };
+
+  const onPathClicked = (index: number) => {
+    startListFolder(index >= 0 ? folderListing.path.slice(0, index + 1) : []);
+  };
+
+  const onPlayClicked = () => {
+    setFolderListing(null);
+    playFolder(folderListing.path).then(() => navigate('/player'));
+  };
+
+  const track: TrackInfo = {
+    title: 'Ram Ranch',
+    artist: 'Grant McDonnough',
+    album: 'Album of Dicks',
+    duration: 920
+  };
 
   return (
     <Page>
       <TitleBar/>
-      <FolderRowArea>
-        {folders}
-      </FolderRowArea>
+      <ControlRow
+        path={folderListing.path}
+        playerAvailable={playerState ? playerState.initialPlaylistChosen : false}
+        onFolderClicked={onPathClicked}
+        onPlayClicked={onPlayClicked}
+      />
+      <TracksLabel>Folders</TracksLabel>
+      <FolderSelector folders={folderListing.childFolders} onFolderClicked={onFolderClicked} />
+      <TracksLabel>Tracks</TracksLabel>
+      <TrackListing tracks={folderListing.tracks} />
     </Page>
   );
 };

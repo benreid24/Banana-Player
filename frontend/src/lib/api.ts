@@ -127,12 +127,14 @@ export const listFolder = async (path: string[]): Promise<FolderListing> => {
   if (dummy) {
     await new Promise(resolve => setTimeout(resolve, 1500));
     return {
-      path: path.slice(0, path.length - 1),
+      path: path,
       name: path[path.length - 1],
       childFolders: [
         'Folder 1',
         'Folder 2',
-        'Folder 3'
+        'Folder 3',
+        'Folder 4',
+        'Really Long Folder Name Wow Crazy'
       ],
       tracks: dummyTracks
     };
@@ -142,4 +144,14 @@ export const listFolder = async (path: string[]): Promise<FolderListing> => {
     path: path
   }, 'list_folder');
   return res as FolderListing;
+};
+
+export const playFolder = async (path: string[]): Promise<void> => {
+  if (dummy) {
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    // TODO - set dummy player state to playing
+    return;
+  }
+
+  await connection!.sendRequest({path: path}, 'play_folder');
 };
