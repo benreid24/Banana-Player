@@ -41,6 +41,10 @@ const FolderRow = styled.div`
   width: 95%;
   margin-bottom: 30px;
   height: 14vh;
+  margin-right: auto;
+  margin-left: auto;
+  align-items: center;
+  justify-content: center;
 `;
 
 const FolderRowArea = styled.div`
@@ -48,11 +52,12 @@ const FolderRowArea = styled.div`
   flex-direction: column;
   max-height: 75%;
   min-width: 50%;
-  max-width: 1100px;
+  max-width: 95%;
   margin-left: auto;
   margin-right: auto;
   margin-top: 30px;
   overflow-y: auto;
+  overflow-x: hidden;
 `;
 
 const FolderTile: React.FC<{title: string, onClicked: (title: string) => void;}> = ({title, onClicked}) => {

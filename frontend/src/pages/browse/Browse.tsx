@@ -7,12 +7,11 @@ import {usePlayerContext} from 'lib/contexts/PlayerContext';
 import {TitleBar} from 'components/TitleBar';
 import {LoadingState} from 'components/LoadingState';
 import {Page} from 'components/Page';
-import {FolderListing, TrackInfo} from 'lib/types';
+import {FolderListing} from 'lib/types';
 import {listFolder, playFolder} from 'lib/api';
 import {FolderSelector} from './FolderSelector';
 import {TrackListing} from './TrackListing';
 import {ControlRow} from './ControlRow';
-import path from 'path';
 
 const TracksLabel = styled.h2`
   font-size: 28pt;
@@ -34,7 +33,7 @@ export const Browse: React.FC = () => {
       setInitialListing(true);
       listFolder(playerState.playingPath).then(listing => setFolderListing(listing));
     }
-  }, [setFolderListing, playerState]);
+  }, [setFolderListing, playerState, folderListing, initialListing]);
 
   if (!playerConfig) {
     return (
@@ -83,13 +82,6 @@ export const Browse: React.FC = () => {
         startListFolder(path);
       }
     });
-  };
-
-  const track: TrackInfo = {
-    title: 'Ram Ranch',
-    artist: 'Grant McDonnough',
-    album: 'Album of Dicks',
-    duration: 920
   };
 
   return (

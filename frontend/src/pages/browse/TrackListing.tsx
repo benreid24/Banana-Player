@@ -21,7 +21,6 @@ export type TracksListingProps = {
 };
 
 export const TrackListing: React.FC<TracksListingProps> = ({tracks}) => {
-  let isEven = true;
   const renderedTracks = tracks.map((track, i) => (
     <TrackRow key={`${track.title}:${track.artist}`} track={track} isEven={i % 2 === 0} isPlaying={false} />
   ));
